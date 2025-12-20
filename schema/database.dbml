@@ -1,0 +1,103 @@
+Project RoadBuds{
+  database_type: 'PostgreSQL'
+  note: 'Database schema for RoadBuds application'
+}
+
+Table roadbuds.help_requests {
+  id integer [primary key]
+  location point
+  submitted_time timestamp [not null]
+  closing_time timestamp
+  description text
+  assistance_type_id integer [ref: > "roadbuds".assistance_types.id, not null]
+  author_id integer [ref: > "roadbuds".users.id]
+  status "roadbuds".request_status [not null, default: 'Active']
+  
+  Note: "user requests of assistance"
+}
+
+Table roadbuds.users {
+  id integer [primary key]
+  name varchar(64) [not null]
+  surname varchar(64)
+  nickname varchar(32) [unique, not null]
+  email varchar(120) [unique, not null]
+  phone varchar(20) [not null]
+  created_at timestamp [not null, default: `now()`]
+  password_hash varchar(256) [not null]
+  photo_url varchar(256)
+  badges json [not null, default: '{}']
+}
+
+Table roadbuds.help_offers {
+  id integer [primary key]
+  request_id integer [ref: > "roadbuds".help_requests.id, not null]
+  helper_id integer [ref: > "roadbuds".users.id, not null]
+  offered_time timestamp [not null]
+  message text
+  location point
+}
+
+Table roadbuds.assistance_types {
+  id integer [pk, increment]
+  name varchar [not null, unique]
+  description text
+  recommendations_url varchar(256)
+}
+
+Table roadbuds.reviews {
+  id integer [primary key]
+  request_id integer [ref: > "roadbuds".help_requests.id, not null]
+  reviewer_id integer [ref: > "roadbuds".users.id, not null]
+  rating smallint [not null, default: 5, note: 'Rating from 1 to 5']
+  comment text
+  created_at timestamp [not null, default: `now()`]
+}
+
+Table roadbuds.notifications {
+  id integer [primary key]
+  user_id integer [ref: > "roadbuds".users.id, not null]
+  message text [not null]
+  is_read boolean [not null, default: false]
+  created_at timestamp [not null, default: `now()`]
+}
+
+Table roadbuds.user_activity{
+  user_id integer [ref: > "roadbuds".users.id, primary key]
+  user_status varchar(32) [not null, default: 'Active']
+  last_action_time timestamp [not null, default: `now()`] // Timestamp of the last activity mostly for timeouts
+  Note: "tracks user activity status if they are looking for help or available to help"
+}
+
+Table roadbuds.settings{
+  user_id integer [ref: > "roadbuds".users.id, primary key]
+  notify_on_request boolean [not null, default: true]
+  notify_on_offer boolean [not null, default: true]
+  Note: "user notification settings"
+}
+
+Table roadbuds.user_contact_options{
+  user_id integer [ref: > "roadbuds".users.id, primary key]
+  contact_type roadbuds.contact_type [unique, not null] // e.g., 'whatsapp', 'telegram', 'viber', 'phone'
+  contact_value varchar(120) [not null] // e.g., phone number or email or tag
+  is_preferred boolean [not null, default: false]
+  Note: "user emergency or trusted contacts"
+}
+
+Enum roadbuds.request_status{
+  Active
+  Taken
+  Withdrawn
+  Timeout
+  Resolved
+}
+
+Enum roadbuds.contact_type{
+  whatsapp
+  snapchat
+  imessage
+  telegram
+  viber
+  phone
+  sms
+}
