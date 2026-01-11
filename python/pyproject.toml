@@ -1,0 +1,40 @@
+[project]
+name = "roadbuds"
+version = "0.1.0"
+description = "Peer road assistance platform backend"
+readme = "roadbuds/README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "alembic>=1.17.2",
+    "black[d]>=25.12.0",
+    "email-validator>=2.3.0",
+    "fastapi[standard-no-fastapi-cloud-cli]>=0.127.0",
+    "geoalchemy2>=0.16.0",
+    "phonenumbers>=9.0.21",
+    "psycopg[binary]>=3.3.2",
+    "pwdlib[argon2]>=0.3.0",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.11.0",
+    "pyjwt>=2.10.1",
+    "python-dotenv>=1.0.1",
+    "sqlalchemy>=2.0.45",
+    "uvicorn>=0.40.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.black]
+line-length = 120
+
+[tool.uv]
+package = true
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.10",
+]
+
+[tool.roadbuds]
+env-file = ".env"
