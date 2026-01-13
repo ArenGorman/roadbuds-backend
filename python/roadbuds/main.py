@@ -1,5 +1,3 @@
-import contextlib
-
 import fastapi
 
 from roadbuds.users import router as users_router

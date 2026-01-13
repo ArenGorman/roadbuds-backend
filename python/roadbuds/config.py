@@ -1,13 +1,17 @@
 # config.py
+import os
 import logging
 
 import pydantic_settings
+import dotenv
+
+dotenv.load_dotenv("../dev.env")
 
 
 class Settings(pydantic_settings.BaseSettings):
     # Secrets (from env vars only in production)
-    database_url: str
-    secret_key: str
+    database_url: str = os.getenv("DATABASE_URL")
+    secret_key: str = os.getenv("SECRET_KEY")
 
     # Non-secrets (can come from .env or defaults)
     app_name: str = "roadbuds"

@@ -8,7 +8,7 @@ import pydantic_extra_types.phone_numbers
 class UserBase(pydantic.BaseModel):
     first_name: str
     last_name: str
-    nickname: str
+    username: str
     email: pydantic.EmailStr
     phone: pydantic_extra_types.phone_numbers.PhoneNumber
     photo_url: str | None
@@ -22,7 +22,7 @@ class UserCreate(UserBase):
 class UserUpdate(UserCreate):
     first_name: typing.Optional[str | None] = None
     last_name: typing.Optional[str | None] = None
-    nickname: typing.Optional[str | None] = None
+    username: typing.Optional[str | None] = None
     email: typing.Optional[pydantic.EmailStr | None] = None
     phone: typing.Optional[pydantic_extra_types.phone_numbers.PhoneNumber | None] = None
     photo_url: typing.Optional[str | None] = None

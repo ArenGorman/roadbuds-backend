@@ -3,6 +3,7 @@ import logging
 
 import fastapi
 import sqlalchemy
+import sqlalchemy.exc
 
 from roadbuds import db, utils
 from roadbuds.users import models, schemas
@@ -21,8 +22,8 @@ async def create_user(user_schema: schemas.UserCreate):
     if session.query(models.User).filter_by(email=user_schema.email).first():
         conflicts.append("email")
 
-    if session.query(models.User).filter_by(nickname=user_schema.nickname).first():
-        conflicts.append("nickname")
+    if session.query(models.User).filter_by(username=user_schema.username).first():
+        conflicts.append("username")
 
     if conflicts:
         conflict_details = ", ".join([f"{field}='{getattr(user_schema, field)}'" for field in conflicts])
@@ -39,7 +40,7 @@ async def create_user(user_schema: schemas.UserCreate):
     new_user = models.User(
         first_name=user_schema.first_name,
         last_name=user_schema.last_name,
-        nickname=user_schema.nickname,
+        username=user_schema.username,
         email=user_schema.email,
         phone=user_schema.phone,
         created_at=datetime.datetime.now(tz=datetime.timezone.utc),
@@ -52,7 +53,7 @@ async def create_user(user_schema: schemas.UserCreate):
         session.add(new_user)
         session.commit()
         return {
-            "message": f'User "{user_schema.nickname}" created successfully!',
+            "message": f'User "{user_schema.username}" created successfully!',
             "user": schemas.UserResponse.model_validate(new_user),
         }
     except sqlalchemy.exc.SQLAlchemyError as e:
@@ -113,7 +114,7 @@ async def update_user(user_id: int, user_schema: schemas.UserUpdate):
 
     # Return updated user data
     return {
-        "message": f"User {user.nickname} updated successfully",
+        "message": f"User {user.username} updated successfully",
         "updated_fields": updated_fields,
         "user": schemas.UserResponse.model_validate(user),
     }

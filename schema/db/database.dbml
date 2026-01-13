@@ -20,7 +20,7 @@ Table roadbuds.users {
   id integer [primary key, increment]
   first_name varchar(64) [not null]
   last_name varchar(64)
-  nickname varchar(32) [unique, not null]
+  username varchar(32) [unique, not null]
   email varchar(120) [unique, not null]
   phone varchar(20) [not null]
   created_at timestamp [not null, default: `now()`]
